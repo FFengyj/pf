@@ -1,0 +1,33 @@
+{
+    "name": "fyj/pf",
+    "description": "test",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "fyj",
+            "email": "314146276@qq.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Fyj\\pf\\": "src/"
+        }
+    },
+    "require": {
+        "phalcon/incubator": "3.4.5",
+        "pda/pheanstalk": "^3.1",
+        "robmorgan/phinx": "^0.12.3",
+        "vlucas/phpdotenv": "^5.3",
+        "ext-pdo": "*",
+        "ext-json": "*",
+        "ext-curl": "*",
+        "ext-redis": "*"
+    },
+    "repositories": {
+        "packagist": {
+            "type": "composer",
+            "url": "https://mirrors.aliyun.com/composer/"
+        }
+    }
+}
