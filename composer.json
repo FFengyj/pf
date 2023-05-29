@@ -1,7 +1,6 @@
 {
     "name": "fyj/pf",
-    "description": "test",
-    "type": "project",
+    "type": "library",
     "license": "MIT",
     "authors": [
         {
@@ -9,11 +8,6 @@
             "email": "314146276@qq.com"
         }
     ],
-    "autoload": {
-        "psr-4": {
-            "Fyj\\pf\\": "src/"
-        }
-    },
     "require": {
         "phalcon/incubator": "3.4.5",
         "pda/pheanstalk": "^3.1",
@@ -23,6 +17,11 @@
         "ext-json": "*",
         "ext-curl": "*",
         "ext-redis": "*"
+    },
+    "autoload": {
+        "files": [
+            "src/autoload.php"
+        ]
     },
     "repositories": {
         "packagist": {
