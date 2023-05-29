@@ -26,12 +26,18 @@ class ServiceRedis implements ServiceProviderInterface
 
             $service_name = $group == 'default' ? 'redis' : $group;
             $di->setShared($service_name, function() use ($cfg) {
+
                 $redis        = new \Redis();
-                $redis->connect($cfg->host, $cfg->port);
+                $redis->connect($cfg->host, $cfg->port,$cfg->timeout,$cfg->reserved,$cfg->retry_interval,$cfg->read_timeout);
                 if ($cfg->auth) {
                     $redis->auth($cfg->auth);
                 }
                 $redis->select($cfg->db);
+
+                foreach ($cfg->options as $key => $val) {
+                    $redis->setOption($key,$val);
+                }
+
                 return $redis;
             });
         }

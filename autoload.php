@@ -3,13 +3,13 @@
 $loader = new \Phalcon\Loader();
 $loader->registerNamespaces(
     [
-        'Pf\System'       => ROOT_PATH . '/src',
+        'Pf\System'       => __DIR__ . '/src',
     ]
 );
 
 $loader->registerFiles(
     [
-        ROOT_PATH . '/src/Core/Functions.php'
+        __DIR__ . '/src/Core/Functions.php'
     ]
 );
 
