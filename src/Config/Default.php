@@ -4,8 +4,6 @@
  * 默认配置
  */
 
-!defined('ROOT_PATH') && define('ROOT_PATH',dirname(__DIR__,3));
-
 return [
 
     /**

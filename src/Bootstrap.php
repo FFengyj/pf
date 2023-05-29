@@ -125,6 +125,10 @@ class Bootstrap
             $options['root_path'] = defined('ROOT_PATH') ? ROOT_PATH : getcwd();
         }
 
+        if (!defined('ROOT_PATH')) {
+            define('ROOT_PATH',$options['root_path']);
+        }
+
         if (!isset($options['module_name'])) {
             $options['module_name'] = defined('MODULE_NAME') ? MODULE_NAME : '';
         }
