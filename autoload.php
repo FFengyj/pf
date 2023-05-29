@@ -1,7 +1,5 @@
 <?php
 
-define('ROOT_PATH', dirname(__DIR__));
-
 $loader = new \Phalcon\Loader();
 $loader->registerNamespaces(
     [
@@ -17,7 +15,6 @@ $loader->registerFiles(
 
 $loader->register();
 
-
-require ROOT_PATH . '/vendor/autoload.php';
+//require ROOT_PATH . '/vendor/autoload.php';
 
 

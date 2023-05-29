@@ -104,6 +104,11 @@ return [
             'port' => env('REDIS_PORT',6379),
             'auth' => env('REDIS_AUTH',''),
             'db'   => env('REDIS_DB',0),
+            'timeout'  => 3,         //value in seconds (optional, default is 0.0 meaning unlimited)
+            'reserved' => null,     //should be null if $retry_interval is specified
+            'retry_interval' => 0,  //retry interval in milliseconds.
+            'read_timeout' => 0,    //value in seconds (optional, default is 0 meaning unlimited)
+            'options' => []         //[key => value]
         ],
     ],
 
@@ -172,6 +177,11 @@ return [
     'custom_di' => [
 
         /**
+         * flash
+         */
+        'flash' => [\Pf\System\Core\Plugin\Flash::class,true],
+
+        /**
          * beanstalk 消息队列服务
          */
         'queue' => [\Pf\System\Core\Provider\ServiceBeanstalk::class],
@@ -185,11 +195,6 @@ return [
          * 内存锁
          */
         'lock' => [\Pf\System\Core\Provider\ServiceLock::class],
-
-        /**
-         * flash
-         */
-        'flash' => [\Pf\System\Core\Plugin\Flash::class,true],
 
         /**
          * response

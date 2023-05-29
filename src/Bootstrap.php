@@ -183,6 +183,8 @@ class Bootstrap
 
         foreach ($config as $name => $provider) {
 
+            if ($provider === null) continue;
+
             if (is_string($provider[0]) && class_exists($provider[0])) {
 
                 $implements = class_implements($provider[0]);
@@ -216,7 +218,7 @@ class Bootstrap
         //通过model获取调度事件
         $model_name = $this->options['module_name'] ?: "default";
         $listeners['dispatcher'] =  $dispatcher[$model_name] ?? [];
-        
+
         $sys_service = [
             'dispatcher'    => $dispatcher_svc,
             'modelsManager' => \Phalcon\Mvc\Model\Manager::class,
