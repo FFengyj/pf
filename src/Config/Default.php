@@ -203,6 +203,22 @@ return [
          * request
          */
         'request' => [\Pf\System\Core\Plugin\Request::class,true],
+
+        /**
+         * modelsMetadata
+         */
+        'modelsMetadata' => [function () {
+            $dir = ROOT_PATH ."/runtime/cache/";
+            if (!file_exists($dir)) {
+                mkdir($dir,0777,true);
+            }
+            $metadata = new Phalcon\Mvc\Model\MetaData\Files(
+                [
+                    "metaDataDir" => $dir,
+                ]
+            );
+            return $metadata;
+        },true],
     ],
 
     /**

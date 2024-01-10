@@ -6,7 +6,6 @@
 namespace Pf\System\Core\Mvc;
 
 
-use Constants\RedisKey;
 use Phalcon\Mvc\Model as Model;
 
 /**
@@ -86,14 +85,15 @@ class ModelBase extends Model
             },$arguments);
             $cache_key = sprintf("$key||%s", json_encode($arguments, JSON_UNESCAPED_UNICODE));
 
+            //todo redis expire
             switch ($action) {
 
                 case "From":
-                    return self::wrapGetCache($class, $method, $arguments, $cache_key, RedisKey::expire($key));
+                    return self::wrapGetCache($class, $method, $arguments, $cache_key, 7200);
                 case "Del":
                     return self::wrapDelCache($cache_key);
                 case "Reset":
-                    return self::wrapGetCache($class, $method, $arguments, $cache_key, RedisKey::expire($key), true);
+                    return self::wrapGetCache($class, $method, $arguments, $cache_key, 7200, true);
             }
         }
 
@@ -497,8 +497,11 @@ class ModelBase extends Model
         $vals = ltrim(str_repeat(",({$vals})", count($data)), ',');
         $sql .= " INTO {$tableName} ({$cols}) VALUES {$vals} {$update}";
 
+        $connection = $this->getWriteConnection();
+        $this->_checkConnection($connection);
+
         /* @var \PDOStatement $sth */
-        $sth = $this->getWriteConnection()->prepare($sql);
+        $sth = $connection->prepare($sql);
         $i = 1;
         foreach ($data as $line => $row) {
             foreach ($row as $k => &$v) {
@@ -538,8 +541,12 @@ class ModelBase extends Model
             $fields[] = "`{$col}` = :{$col}";
         }
         $sql = sprintf("UPDATE `%s` SET %s WHERE %s", $this->getSource(), implode(',', $fields), $conditions);
+
+        $connection = $this->getWriteConnection();
+        $this->_checkConnection($connection);
+
         /* @var \PDOStatement $sth */
-        $sth = $this->getWriteConnection()->prepare($sql);
+        $sth = $connection->prepare($sql);
 
         foreach (array_merge($data, $bind) as $k => $v) {
             $sth->bindValue(":" . trim($k, ":"), $v);
@@ -575,8 +582,11 @@ class ModelBase extends Model
             $sql .= " LIMIT " . intval($limit);
         }
 
+        $connection = $this->getWriteConnection();
+        $this->_checkConnection($connection);
+
         /* @var \PDOStatement $sth */
-        $sth = $this->getWriteConnection()->prepare($sql);
+        $sth = $connection->prepare($sql);
 
         foreach ($bind as $k => $v) {
             $sth->bindValue(":" . trim($k, ":"), $v);
@@ -586,5 +596,23 @@ class ModelBase extends Model
             return false;
         }
         return $sth->rowCount();
+    }
+
+    /**
+     * @param \Phalcon\Db\AdapterInterface $connection
+     * @return string|null
+     */
+    protected function _checkConnection(\Phalcon\Db\AdapterInterface $connection)
+    {
+        $info = null;
+        try {
+            $info = @$connection->getInternalHandler()->getAttribute(\PDO::ATTR_SERVER_INFO);
+        } catch (\PDOException $e) {
+            if ($e->errorInfo[1] == 2006) {
+                $connection->connect();
+            }
+        } catch (\Throwable $e) {}
+
+        return $info;
     }
 }

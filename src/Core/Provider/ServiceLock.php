@@ -34,9 +34,8 @@ class ServiceLock implements ServiceProviderInterface
     public function register(DiInterface $di)
     {
         if ($config = $di->get('config')->path('lock',[])) {
-
-            $memory = $di->getShared($config['memory_svc']);
-            $di->setShared($this->service_name, function () use($memory,$config) {
+            $di->setShared($this->service_name, function () use($di,$config) {
+                $memory = $di->getShared($config['memory_svc']);
                 return new $config['adapter']($memory,$config['options']);
             });
         }

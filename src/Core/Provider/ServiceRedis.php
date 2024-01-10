@@ -27,14 +27,27 @@ class ServiceRedis implements ServiceProviderInterface
             $service_name = $group == 'default' ? 'redis' : $group;
             $di->setShared($service_name, function() use ($cfg) {
 
-                $redis        = new \Redis();
-                $redis->connect($cfg->host, $cfg->port,$cfg->timeout,$cfg->reserved,$cfg->retry_interval,$cfg->read_timeout);
-                if ($cfg->auth) {
-                    $redis->auth($cfg->auth);
-                }
-                $redis->select($cfg->db);
+                $redis = new \Redis();
+                $conf = $cfg->toArray();
 
-                foreach ($cfg->options as $key => $val) {
+                $conf['timeout']        =  $conf['timeout'] ?? 5;
+                $conf['retry_interval'] = $conf['retry_interval'] ?? 0;
+                $conf['read_timeout']   = $conf['read_timeout'] ?? 0;
+                $conf['reserved']       = $conf['reserved'] ?? null;
+                $conf['options']        = $conf['options'] ?? [];
+
+                if (!empty($conf['persistent_id'])) {
+                    $redis->pconnect($conf['host'], $conf['port'],$conf['timeout'],$conf['persistent_id'],$conf['retry_interval'],$conf['read_timeout']);
+                } else {
+                    $redis->connect($conf['host'], $conf['port'],$conf['timeout'],$conf['reserved'],$conf['retry_interval'],$conf['read_timeout']);
+                }
+
+                if (isset($conf['auth'])) {
+                    $redis->auth($conf['auth']);
+                }
+                $redis->select($conf['db'] ?? 0);
+
+                foreach ($conf['options'] as $key => $val) {
                     $redis->setOption($key,$val);
                 }
 
